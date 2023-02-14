@@ -1,0 +1,15 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t sinusen/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true sinusen/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t sinusen/multi-client ./client
+  - docker build -t sinusen/multi-nginx ./nginx
+  - docker build -t sinusen/multi-server ./server
+  - docker build -t sinusen/multi-worker ./worker
